@@ -51,7 +51,7 @@ var MessageForm = React.createClass({
 		return {text: ''};
 	},
 
-	handleSubmit : React.autoBind(function(e){
+	handleSubmit : function(e){
 		e.preventDefault();
 		var message = {
 			user : this.props.user,
@@ -59,18 +59,18 @@ var MessageForm = React.createClass({
 		}
 		this.props.onMessageSubmit(message);	
 		this.setState({ text: '' });
-	}),
+	},
 
-	onKey : React.autoBind(function(e){
+	changeHandler : function(e){
 		this.setState({ text : e.target.value });
-	}),
+	},
 
 	render: function(){
 		return(
 			<div class='message_form'>
 				<h3>Write New Message</h3>
 				<form onSubmit={this.handleSubmit}>
-					<input onKeyUp={this.onKey} value={this.state.text} />
+					<input onChange={this.changeHandler} value={this.state.text} />
 				</form>
 			</div>
 		);
@@ -82,23 +82,23 @@ var ChangeNameForm = React.createClass({
 		return {newName: ''};
 	},
 
-	onKey : React.autoBind(function(e){
+	onKey : function(e){
 		this.setState({ newName : e.target.value });
-	}),
+	},
 
-	handleSubmit : React.autoBind(function(e){
+	handleSubmit : function(e){
 		e.preventDefault();
 		var newName = this.state.newName;
 		this.props.onChangeName(newName);	
 		this.setState({ newName: '' });
-	}),
+	},
 
 	render: function(){
 		return(
 			<div class='change_name_form'>
 				<h3> Change Name </h3>
 				<form onSubmit={this.handleSubmit}>
-					<input onKeyUp={this.onKey} value={this.state.newName} />
+					<input onChange={this.onKey} value={this.state.newName} />
 				</form>	
 			</div>
 		);
@@ -118,26 +118,26 @@ var ChatApp = React.createClass({
 		return {users: [], messages:[], text: ''};
 	},
 
-	initialize: React.autoBind(function(data){
+	initialize: function(data){
 		Users = data.users;
 		this.setState({ users: Users, user: data.name});
-	}),
+	},
 
-	messageRecieve: React.autoBind(function(message){
+	messageRecieve: function(message){
 		Messages.push(message);
 		this.setState({ messages : Messages });
-	}),
+	},
 
-	userJoined: React.autoBind(function(data){
+	userJoined: function(data){
 		Users.push(data.name);
 		Messages.push({
 			user: 'APLICATION BOT',
 			text : data.name +' Joined'
 		});
 		this.setState({ users : Users, messages: Messages});
-	}),
+	},
 
-	userLeft: React.autoBind(function(data){
+	userLeft: function(data){
 		var index = Users.indexOf(data.name);
 		Users.splice(index, 1);
 		Messages.push({
@@ -145,9 +145,9 @@ var ChatApp = React.createClass({
 			text : data.name +' Left'
 		});
 		this.setState({ users : Users, messages: Messages});
-	}),
+	},
 
-	userChangedName : React.autoBind(function(data){
+	userChangedName : function(data){
 		var oldName = data.oldName;
 		var newName = data.newName;
 		Users.splice(Users.indexOf(oldName), 1, newName);
@@ -156,15 +156,15 @@ var ChatApp = React.createClass({
 			text : 'Change Name : ' + oldName + ' ==> '+ newName
 		});
 		this.setState({ users : Users, messages: Messages});
-	}),
+	},
 
-	handleMessageSubmit : React.autoBind(function(message){
+	handleMessageSubmit : function(message){
 		Messages.push(message);
 		this.setState({ messages : Messages });
 		socket.emit('send:message', message);
-	}),
+	},
 
-	handleChangeName : React.autoBind(function(newName){
+	handleChangeName : function(newName){
 		var that = this;
 		var oldName = this.state.user;
 		socket.emit('change:name', { name : newName}, function(result){
@@ -176,7 +176,7 @@ var ChatApp = React.createClass({
 				that.setState({users : Users});
 			}
 		});
-	}),
+	},
 
 	render : function(){
 		return (
