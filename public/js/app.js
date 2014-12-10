@@ -173,7 +173,7 @@ var ChatApp = React.createClass({
 			}else{
 				var index = Users.indexOf(oldName);
 				Users.splice(index, 1, newName);
-				that.setState({users : Users});
+				that.setState({users : Users, user: newName});
 			}
 		});
 	},
