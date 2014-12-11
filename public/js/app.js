@@ -8,11 +8,11 @@ var Messages = [];
 
 var UsersList = React.createClass({
 	render: function(){
-		var renderUser = function(user){
-			return <li> { user} </li>
+		var renderUser = function(user,i){
+			return <li key={i}> {user} </li>
 		};
 		return (
-			<div class='users'>
+			<div className='users'>
 				<h3> Online Users </h3>
 				<ul>{ this.props.users.map(renderUser)} </ul>				
 			</div>
@@ -23,7 +23,7 @@ var UsersList = React.createClass({
 var Message = React.createClass({
 	render: function(){
 		return(
-			<div class="message">
+			<div className="message">
 				<strong>{this.props.user}</strong> :
 				{this.props.text}		
 			</div>
@@ -33,11 +33,11 @@ var Message = React.createClass({
 
 var MessageList = React.createClass({
 	render: function(){
-		var renderMessage = function(message){
-			return <Message user={message.user} text={message.text} />
+		var renderMessage = function(message,i){
+			return <Message user={message.user} text={message.text} key={i} />
 		}
 		return (
-			<div class='messages'>
+			<div className='messages'>
 				<h2> Conversation: </h2>
 				{ this.props.messages.map(renderMessage)} 
 			</div>
@@ -67,7 +67,7 @@ var MessageForm = React.createClass({
 
 	render: function(){
 		return(
-			<div class='message_form'>
+			<div className='message_form'>
 				<h3>Write New Message</h3>
 				<form onSubmit={this.handleSubmit}>
 					<input onChange={this.changeHandler} value={this.state.text} />
@@ -95,7 +95,7 @@ var ChangeNameForm = React.createClass({
 
 	render: function(){
 		return(
-			<div class='change_name_form'>
+			<div className='change_name_form'>
 				<h3> Change Name </h3>
 				<form onSubmit={this.handleSubmit}>
 					<input onChange={this.onKey} value={this.state.newName} />
@@ -190,4 +190,4 @@ var ChatApp = React.createClass({
 	}
 });
 
-React.renderComponent(<ChatApp/>, document.body);
+React.render(<ChatApp/>, document.body);
