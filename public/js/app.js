@@ -119,48 +119,50 @@ var ChatApp = React.createClass({
 	},
 
 	initialize: function(data){
-		Users = data.users;
-		this.setState({ users: Users, user: data.name});
+		this.setState({ users: data.users, user: data.name});
 	},
 
 	messageRecieve: function(message){
-		Messages.push(message);
-		this.setState({ messages : Messages });
+		this.state.messages.push(message);
+		this.setState();
 	},
 
 	userJoined: function(data){
-		Users.push(data.name);
-		Messages.push({
+		this.state.users.push(data.name);
+		this.state.messages.push({
 			user: 'APLICATION BOT',
 			text : data.name +' Joined'
 		});
-		this.setState({ users : Users, messages: Messages});
+		this.setState();
 	},
 
 	userLeft: function(data){
-		var index = Users.indexOf(data.name);
-		Users.splice(index, 1);
-		Messages.push({
+		var index = this.state.users.indexOf(data.name);
+		this.state.users.splice(index, 1);
+		this.state.messages.push({
 			user: 'APLICATION BOT',
 			text : data.name +' Left'
 		});
-		this.setState({ users : Users, messages: Messages});
+		this.setState();
+
 	},
 
 	userChangedName : function(data){
 		var oldName = data.oldName;
 		var newName = data.newName;
-		Users.splice(Users.indexOf(oldName), 1, newName);
-		Messages.push({
+		this.state.users.splice(this.state.users.indexOf(oldName), 1, newName);
+		this.state.messages.push({
 			user: 'APLICATION BOT',
 			text : 'Change Name : ' + oldName + ' ==> '+ newName
 		});
-		this.setState({ users : Users, messages: Messages});
+		this.setState();
+
 	},
 
 	handleMessageSubmit : function(message){
-		Messages.push(message);
-		this.setState({ messages : Messages });
+		this.state.messages.push(message);
+		this.setState();
+
 		socket.emit('send:message', message);
 	},
 
@@ -171,9 +173,9 @@ var ChatApp = React.createClass({
 			if(!result){
 				alert('There was an error changing your name');
 			}else{
-				var index = Users.indexOf(oldName);
-				Users.splice(index, 1, newName);
-				that.setState({users : Users});
+				var index = that.state.users.indexOf(oldName);
+				that.state.users.splice(index, 1, newName);
+				that.setState();
 			}
 		});
 	},
