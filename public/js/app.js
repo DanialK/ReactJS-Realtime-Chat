@@ -130,7 +130,7 @@ var ChatApp = React.createClass({
 	userJoined: function(data){
 		this.state.users.push(data.name);
 		this.state.messages.push({
-			user: 'APLICATION BOT',
+			user: 'APPLICATION BOT',
 			text : data.name +' Joined'
 		});
 		this.setState();
@@ -140,7 +140,7 @@ var ChatApp = React.createClass({
 		var index = this.state.users.indexOf(data.name);
 		this.state.users.splice(index, 1);
 		this.state.messages.push({
-			user: 'APLICATION BOT',
+			user: 'APPLICATION BOT',
 			text : data.name +' Left'
 		});
 		this.setState();
@@ -152,7 +152,7 @@ var ChatApp = React.createClass({
 		var newName = data.newName;
 		this.state.users.splice(this.state.users.indexOf(oldName), 1, newName);
 		this.state.messages.push({
-			user: 'APLICATION BOT',
+			user: 'APPLICATION BOT',
 			text : 'Change Name : ' + oldName + ' ==> '+ newName
 		});
 		this.setState();
