@@ -11,6 +11,8 @@ var app = module.exports = express.createServer();
 // Hook Socket.io into Express
 var io = require('socket.io').listen(app);
 
+var router = require('./router');
+
 // Configuration
 
 app.configure(function(){
@@ -32,6 +34,9 @@ app.configure('production', function(){
 // Socket.io Communication
 
 io.sockets.on('connection', socket);
+
+//For solr
+router.route(app);
 
 // Start server
 
