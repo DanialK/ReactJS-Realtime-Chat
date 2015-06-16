@@ -8,8 +8,8 @@ var Messages = [];
 
 var UsersList = React.createClass({
 	render: function(){
-		var renderUser = function(user){
-			return <li> { user} </li>
+		var renderUser = function(user, index){
+			return <li id={index}> { user} </li>
 		};
 		return (
 			<div class='users'>
@@ -23,9 +23,9 @@ var UsersList = React.createClass({
 var Message = React.createClass({
 	render: function(){
 		return(
-			<div class="message">
-				<strong>{this.props.user}</strong> :
-				{this.props.text}		
+			<div class="message-body">
+				<div class="user">{this.props.user}</div>
+				<div class="message">{this.props.text}</div>
 			</div>
 		)
 	}
@@ -38,7 +38,7 @@ var MessageList = React.createClass({
 		}
 		return (
 			<div class='messages'>
-				<h2> Conversation: </h2>
+				<h2> Conversation </h2>
 				{ this.props.messages.map(renderMessage)} 
 			</div>
 		);
@@ -53,13 +53,28 @@ var MessageForm = React.createClass({
 
 	handleSubmit : function(e){
 		e.preventDefault();
-		var message = {
-			user : this.props.user,
-			text : this.state.text
-		}
-		this.props.onMessageSubmit(message);	
-		this.setState({ text: '' });
+        if(this.state.text) {
+            var message = {
+                user: this.props.user,
+                text: this.state.text
+            }
+            this.props.onMessageSubmit(message);
+            this.setState({text: ''});
+        }
 	},
+
+    handleEnter: function(e){
+        e.preventDefault();
+        if(e.keyCode === 13 && this.state.text && (!e.shiftKey)){
+
+            var message = {
+                user: this.props.user,
+                text: this.state.text
+            }
+            this.props.onMessageSubmit(message);
+            this.setState({text: ''});
+        }
+    },
 
 	changeHandler : function(e){
 		this.setState({ text : e.target.value });
@@ -68,9 +83,9 @@ var MessageForm = React.createClass({
 	render: function(){
 		return(
 			<div class='message_form'>
-				<h3>Write New Message</h3>
-				<form onSubmit={this.handleSubmit}>
-					<input onChange={this.changeHandler} value={this.state.text} />
+				<h3></h3>
+				<form onKeyUp={this.handleEnter}>
+					<textarea onChange={this.changeHandler} value={this.state.text}></textarea>
 				</form>
 			</div>
 		);
@@ -79,26 +94,37 @@ var MessageForm = React.createClass({
 
 var ChangeNameForm = React.createClass({
 	getInitialState: function(){
-		return {newName: ''};
+		return {newName: 'Your Name?'};
 	},
 
 	onKey : function(e){
 		this.setState({ newName : e.target.value });
 	},
 
+    oldName: "",
+
 	handleSubmit : function(e){
-		e.preventDefault();
-		var newName = this.state.newName;
-		this.props.onChangeName(newName);	
-		this.setState({ newName: '' });
+        e.preventDefault();
+        var newName = this.state.newName;
+        if(newName !== this.oldName) {
+            this.props.onChangeName(newName);
+            this.oldName = newName;
+        }
 	},
+
+    onInit: function(e){
+        e.preventDefault();
+        if(this.state.newName == "Your Name?") {
+            this.setState({newName: ''});
+        }
+    },
 
 	render: function(){
 		return(
 			<div class='change_name_form'>
-				<h3> Change Name </h3>
+				<h3></h3>
 				<form onSubmit={this.handleSubmit}>
-					<input onChange={this.onKey} value={this.state.newName} />
+					<input onChange={this.onKey} onClick={this.onInit} onBlur={this.handleSubmit} value={this.state.newName} />
 				</form>	
 			</div>
 		);
@@ -119,10 +145,14 @@ var ChatApp = React.createClass({
 	},
 
 	initialize: function(data){
-		this.setState({ users: data.users, user: data.name});
+		this.setState({ users: data.users, user: data.name+'#'+data.users.length});
 	},
 
 	messageRecieve: function(message){
+
+		var decrypted = CryptoJS.AES.decrypt(message.text, "what3ver@#$%^*donE", {format: JsonFormatter});
+        message.text = decrypted.toString(CryptoJS.enc.Utf8);
+
 		this.state.messages.push(message);
 		this.setState();
 	},
@@ -140,7 +170,7 @@ var ChatApp = React.createClass({
 		var index = this.state.users.indexOf(data.name);
 		this.state.users.splice(index, 1);
 		this.state.messages.push({
-			user: 'APLICATION BOT',
+			user: 'APPLICATION BOT',
 			text : data.name +' Left'
 		});
 		this.setState();
@@ -160,10 +190,14 @@ var ChatApp = React.createClass({
 	},
 
 	handleMessageSubmit : function(message){
+
+
+
 		this.state.messages.push(message);
 		this.setState();
 
-		socket.emit('send:message', message);
+        var x = CryptoJS.AES.encrypt(message.text, "what3ver@#$%^*donE", {format: JsonFormatter}).toString();
+		socket.emit('send:message', {user: message.user, text: x});
 	},
 
 	handleChangeName : function(newName){
@@ -175,6 +209,7 @@ var ChatApp = React.createClass({
 			}else{
 				var index = that.state.users.indexOf(oldName);
 				that.state.users.splice(index, 1, newName);
+                that.state.user = newName;
 				that.setState();
 			}
 		});
@@ -182,11 +217,15 @@ var ChatApp = React.createClass({
 
 	render : function(){
 		return (
-			<div>
+			<div class="pull-left">
+                <div class="pull-left">
 				<UsersList users={this.state.users} />
 				<MessageList messages={this.state.messages} />
+                </div>
+                <div class="pull-left">
 				<MessageForm onMessageSubmit={this.handleMessageSubmit} user={this.state.user} />
 				<ChangeNameForm onChangeName={this.handleChangeName} />
+                </div>
 			</div>
 		);
 	}

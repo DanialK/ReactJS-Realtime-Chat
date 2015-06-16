@@ -1,19 +1,59 @@
 body{
-	width: 600px;
 	margin: 0 auto;
-	border: 5px solid tomato;
+    padding: 0;
+}
+
+.pull-left {
+    float: left;
+    width: 100%;
 }
 .users{
 	float : right;
 	margin-right: 1.5em;
+    width:20%;
 }
-.messages {
-	width: 400px;
-	margin: 1em;
-	border : 1px solid black;
-	padding: 1em;
+.messages{
+    float: left;
+    width:70%;
 }
-.message_form,
+.message-body {
+    border-color: indigo;
+    border-style: none none groove;
+    float: left;
+    margin-bottom: 1em;
+    padding: 1em 0;
+    width: 100%;
+}
+.message_form{
+    padding: 1em;
+    width: 70%;
+    float: left;
+}
+
+.message_form textarea, .change_name_form input{
+    width: 99%;
+}
+
+.message_form h3, .change_name_form h3{
+    border: 2px solid blueviolet;
+}
 .change_name_form{
 	padding: 1em;
+    width:20%;
+    float:right;
+}
+
+.user{
+    float:left;
+    background-color: #0b97c4;
+    padding: 3px 10px;
+}
+
+.message {
+    white-space: pre-wrap;
+    float:left;
+    background-color: #464f75;
+    color:#9affff;
+    padding: 3px 10px;
+    margin-left: 5px;
 }
