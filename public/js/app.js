@@ -66,6 +66,7 @@ var MessageForm = React.createClass({
     handleEnter: function(e){
         e.preventDefault();
         if(e.keyCode === 13 && this.state.text && (!e.shiftKey)){
+
             var message = {
                 user: this.props.user,
                 text: this.state.text
@@ -148,6 +149,10 @@ var ChatApp = React.createClass({
 	},
 
 	messageRecieve: function(message){
+
+		var decrypted = CryptoJS.AES.decrypt(message.text, "what3ver@#$%^*donE", {format: JsonFormatter});
+        message.text = decrypted.toString(CryptoJS.enc.Utf8);
+
 		this.state.messages.push(message);
 		this.setState();
 	},
@@ -185,10 +190,14 @@ var ChatApp = React.createClass({
 	},
 
 	handleMessageSubmit : function(message){
+
+
+
 		this.state.messages.push(message);
 		this.setState();
 
-		socket.emit('send:message', message);
+        var x = CryptoJS.AES.encrypt(message.text, "what3ver@#$%^*donE", {format: JsonFormatter}).toString();
+		socket.emit('send:message', {user: message.user, text: x});
 	},
 
 	handleChangeName : function(newName){
