@@ -1,40 +1,33 @@
+'use strict';
 
 /**
  * Module dependencies.
  */
 
-var express = require('express'),
-  socket = require('./routes/socket.js');
+var express = require('express');
+var http = require('http');
 
-var app = module.exports = express.createServer();
+var socket = require('./routes/socket.js');
 
-// Hook Socket.io into Express
-var io = require('socket.io').listen(app);
+var app = express();
+var server = http.createServer(app);
 
-// Configuration
+/* Configuration */
+app.set('views', __dirname + '/views');
+app.use(express.static(__dirname + '/public'));
+app.set('port', 3000);
 
-app.configure(function(){
-  app.set('views', __dirname + '/views');
-  app.use(express.bodyParser());
-  app.use(express.methodOverride());
-  app.use(express.static(__dirname + '/public'));
-  app.use(app.router);
-});
+if (process.env.NODE_ENV === 'development') {
+	app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
+}
 
-app.configure('development', function(){
-  app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
-});
-
-app.configure('production', function(){
-  app.use(express.errorHandler());
-});
-
-// Socket.io Communication
-
+/* Socket.io Communication */
+var io = require('socket.io').listen(server);
 io.sockets.on('connection', socket);
 
-// Start server
-
-app.listen(3000, function(){
-  console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);
+/* Start server */
+server.listen(app.get('port'), function (){
+  console.log('Express server listening on port %d in %s mode', app.get('port'), app.get('env'));
 });
+
+module.exports = app;

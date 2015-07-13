@@ -8,8 +8,12 @@ First, grab the dependencies with npm:
 
     npm install
 
+Build the applicaiton
+	
+	npm run build
+
 Then run the app like so:
 
-    node app.js
+    npm start
 
 And navigate to `localhost:3000`
